@@ -3,66 +3,56 @@ import type { SimpleProduct } from '~/types'
 export interface ComparisonProduct {
   product: SimpleProduct
   storeName: string
+  uniqueId: string // ID generado al agregar
 }
 
 const selectedProducts = ref<ComparisonProduct[]>([])
-const MAX_COMPARISON = 4 // Máximo de productos comparables
+const MAX_COMPARISON = 4
+
+// Helper para crear ID único usando múltiples propiedades
+const createUniqueId = (product: SimpleProduct, storeName: string): string => {
+  // Usar JSON.stringify para garantizar unicidad
+  const data = {
+    url: product.url,
+    name: product.product_name,
+    price: product.price,
+    store: storeName
+  }
+  return btoa(JSON.stringify(data)) // Base64 encode para ID compacto
+}
 
 export const useComparison = () => {
-  // Helper: Create unique ID combining product properties
-  const getProductId = (product: SimpleProduct, storeName: string): string => {
-    // Usar múltiples propiedades para crear un ID más único
-    const urlPart = product.url?.trim() || ''
-    const namePart = product.product_name?.trim() || ''
-    const pricePart = product.price?.toString() || ''
-    const storePart = storeName?.trim() || ''
-    
-    return `${storePart}||${urlPart}||${namePart}||${pricePart}`.toLowerCase()
-  }
-
-  const isSelected = (productUrl: string, storeName: string): boolean => {
-    if (!productUrl || !storeName || selectedProducts.value.length === 0) {
+  const isSelected = (product: SimpleProduct, storeName: string): boolean => {
+    if (!product || !storeName || selectedProducts.value.length === 0) {
       return false
     }
     
-    // Buscar por URL y storeName exactos
-    return selectedProducts.value.some(item => 
-      item.product.url === productUrl && item.storeName === storeName
-    )
+    const searchId = createUniqueId(product, storeName)
+    return selectedProducts.value.some(item => item.uniqueId === searchId)
   }
 
   const toggleProduct = (product: SimpleProduct, storeName: string): void => {
-    console.log('🔵 TOGGLE PRODUCT CALLED:', {
+    const uniqueId = createUniqueId(product, storeName)
+    
+    console.log('🔵 TOGGLE:', {
       productName: product.product_name.substring(0, 40),
-      productUrl: product.url.substring(0, 50),
-      storeName,
-      currentSelectionCount: selectedProducts.value.length
+      uniqueId: uniqueId.substring(0, 20) + '...',
+      currentCount: selectedProducts.value.length
     })
     
-    // Buscar por URL y storeName exactos
-    const index = selectedProducts.value.findIndex(item => 
-      item.product.url === product.url && item.storeName === storeName
-    )
+    const index = selectedProducts.value.findIndex(item => item.uniqueId === uniqueId)
     
     if (index > -1) {
-      // Remover producto
-      console.log('❌ REMOVIENDO producto en index:', index)
+      console.log('❌ REMOVIENDO producto')
       selectedProducts.value.splice(index, 1)
     } else {
-      // Agregar producto si no excede el máximo
       if (selectedProducts.value.length < MAX_COMPARISON) {
-        console.log('✅ AGREGANDO producto. Nuevo total:', selectedProducts.value.length + 1)
-        selectedProducts.value.push({ product, storeName })
-      } else {
-        console.log('⚠️ NO SE PUEDE AGREGAR - Límite alcanzado')
+        console.log('✅ AGREGANDO producto')
+        selectedProducts.value.push({ product, storeName, uniqueId })
       }
     }
     
-    console.log('📊 Estado final de selectedProducts:', selectedProducts.value.map(p => ({
-      store: p.storeName,
-      name: p.product.product_name.substring(0, 30),
-      url: p.product.url.substring(0, 50)
-    })))
+    console.log('📊 Total seleccionados:', selectedProducts.value.length)
   }
 
   const clearSelection = (): void => {

@@ -168,8 +168,8 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
-// Comparison functionality - USING V2 (more robust)
-const { isSelected: isSelectedFn, toggleProduct, canAddMore, selectedProducts } = useComparisonV2()
+// Comparison functionality
+const { isSelected: isSelectedFn, toggleProduct, canAddMore, selectedProducts } = useComparison()
 
 const isProductSelected = computed(() => {
   const result = isSelectedFn(props.product, props.storeName)

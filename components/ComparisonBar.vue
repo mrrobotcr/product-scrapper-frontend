@@ -141,6 +141,18 @@
       </div>
     </div>
   </Transition>
+
+  <!-- Comparison Modal -->
+  <ComparisonModal
+    :is-open="showModal"
+    :products="selectedProducts.map(p => ({
+      url: p.product.url,
+      storeName: p.storeName,
+      product_name: p.product.product_name,
+      price: p.product.price
+    }))"
+    @close="closeModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -153,7 +165,7 @@ const {
   toggleProduct,
   clearSelection,
   MAX_COMPARISON
-} = useComparisonV2()
+} = useComparison()
 
 // Smart hide/show on scroll
 const isVisible = ref(true)
@@ -191,14 +203,17 @@ watch(selectedCount, () => {
   isVisible.value = true
 })
 
+const showModal = ref(false);
+
 const handleCompare = () => {
   if (!canCompare.value) return
   
-  // TODO: Implementar lógica de comparación cuando el backend esté listo
-  console.log('Comparando productos:', selectedProducts.value)
-  
-  // Por ahora, mostrar un mensaje
-  alert(`Comparando ${selectedCount.value} productos:\n${selectedProducts.value.map(p => `- ${p.product.product_name}`).join('\n')}`)
+  console.log('🚀 Abriendo modal de comparación con', selectedCount.value, 'productos')
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
 }
 </script>
 
