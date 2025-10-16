@@ -1,0 +1,238 @@
+/**
+ * Design System - Product Scrapper
+ * Inspired by Linear, Vercel, and Notion
+ * 
+ * Principles:
+ * - Spatial consistency (8px grid)
+ * - Type hierarchy (clear scale)
+ * - Color semantic meaning
+ * - Motion with purpose
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Typography Scale - Based on 1.250 (Major Third) */
+  :root {
+    /* Spacing System - 8px base */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-2xl: 3rem;    /* 48px */
+    --spacing-3xl: 4rem;    /* 64px */
+
+    /* Colors - Semantic */
+    --color-primary: 59 130 246;      /* blue-500 */
+    --color-primary-hover: 37 99 235; /* blue-600 */
+    --color-success: 34 197 94;       /* green-500 */
+    --color-warning: 251 146 60;      /* orange-400 */
+    --color-error: 239 68 68;         /* red-500 */
+    
+    /* Surface Colors */
+    --color-surface-base: 255 255 255;
+    --color-surface-subtle: 249 250 251;    /* gray-50 */
+    --color-surface-hover: 243 244 246;     /* gray-100 */
+    
+    /* Text Colors */
+    --color-text-primary: 17 24 39;         /* gray-900 */
+    --color-text-secondary: 107 114 128;    /* gray-500 */
+    --color-text-tertiary: 156 163 175;     /* gray-400 */
+    
+    /* Borders */
+    --color-border-subtle: 229 231 235;     /* gray-200 */
+    --color-border-medium: 209 213 219;     /* gray-300 */
+    
+    /* Shadows - Layered elevation */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Border Radius */
+    --radius-sm: 0.375rem;  /* 6px */
+    --radius-md: 0.5rem;    /* 8px */
+    --radius-lg: 0.75rem;   /* 12px */
+    --radius-xl: 1rem;      /* 16px */
+    
+    /* Transitions - Purposeful motion */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Base Typography */
+  body {
+    @apply text-gray-900 antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.011em;
+  }
+  
+  /* Improved focus states for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400;
+  }
+}
+
+@layer components {
+  /* Button System */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+    @apply shadow-sm hover:shadow-md;
+    @apply focus-visible:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
+    @apply focus-visible:ring-blue-500;
+  }
+  
+  .btn-ghost {
+    @apply text-gray-700 hover:bg-gray-100 active:bg-gray-200;
+  }
+  
+  /* Size variants */
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  .btn-md {
+    @apply px-4 py-2.5 text-sm;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+  
+  /* Input System */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+    @apply placeholder:text-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed;
+    @apply transition-shadow duration-200;
+  }
+  
+  /* Card System */
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+    @apply hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .card-interactive {
+    @apply card hover:border-gray-300 cursor-pointer;
+  }
+  
+  /* Badge System */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-blue-100 text-blue-700;
+  }
+  
+  .badge-success {
+    @apply bg-green-100 text-green-700;
+  }
+  
+  .badge-warning {
+    @apply bg-orange-100 text-orange-700;
+  }
+  
+  /* Loading Spinner */
+  .spinner {
+    @apply inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-in {
+    animation: animate-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .animate-out {
+    animation: animate-out 0.2s ease-in forwards;
+  }
+  
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes animate-out {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+  }
+  
+  /* Vue Transition Classes */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+  
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+  
+  .slide-up-enter-active,
+  .slide-up-leave-active {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .slide-up-enter-from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  
+  .slide-up-leave-to {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+  }
+  
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20;
+  }
+}
