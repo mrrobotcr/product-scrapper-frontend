@@ -5,6 +5,9 @@
 .nitro
 .cache
 dist
+.vercel
+.netlify
+.wrangler
 
 # Node dependencies
 node_modules
@@ -12,13 +15,59 @@ node_modules
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
+# Environment files
 .env
 .env.*
 !.env.example
+
+# IDE
+.DS_Store
+.fleet
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.vitest/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Optional caches
+.npm
+.eslintcache
+.stylelintcache
+.parcel-cache
+
+# Misc
+*.tsbuildinfo
+.vite-inspect

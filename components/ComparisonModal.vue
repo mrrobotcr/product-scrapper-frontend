@@ -285,21 +285,87 @@
                       <!-- Product Content -->
                       <div class="p-4">
                         <div class="flex gap-4">
-                          <!-- Left: Image -->
+                          <!-- Left: Image Gallery -->
                           <div class="flex-shrink-0">
-                            <div class="w-24 h-24 rounded-lg overflow-hidden" 
-                              :class="isDarkMode ? 'bg-gray-700' : 'bg-gray-50'">
-                              <img
-                                v-if="product.images && product.images[0]"
-                                :src="product.images[0]"
-                                :alt="product.name"
-                                class="w-full h-full object-contain p-2"
-                                @error="(e) => (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22system-ui%22 font-size=%2216%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E'"
-                              />
+                            <!-- Main Image -->
+                            <div 
+                              class="relative w-32 h-32 rounded-lg overflow-hidden mb-2 group cursor-pointer" 
+                              :class="isDarkMode ? 'bg-gray-700' : 'bg-gray-50'"
+                              @click="openLightbox(idx, getSelectedImageIndex(idx))"
+                              title="Click para ampliar"
+                            >
+                              <template v-if="getCurrentImage(product, idx)">
+                                <img
+                                  :src="getCurrentImage(product, idx)"
+                                  :alt="product.name"
+                                  class="w-full h-full object-contain p-2 transition-all duration-200 group-hover:scale-105"
+                                  @error="(e) => (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22system-ui%22 font-size=%2216%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E'"
+                                />
+                                <!-- Zoom Icon Overlay -->
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                  <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                                  </svg>
+                                </div>
+                              </template>
                               <div v-else class="w-full h-full flex items-center justify-center">
                                 <svg class="w-8 h-8 opacity-20" :class="isDarkMode ? 'text-gray-600' : 'text-gray-400'" fill="currentColor" viewBox="0 0 20 20">
                                   <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
                                 </svg>
+                              </div>
+                              
+                              <!-- Navigation Arrows (show only if multiple images) -->
+                              <div v-if="product.images && getThumbnails(product.images).length > 1" class="absolute inset-0 flex items-center justify-between px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  @click.stop="selectImage(idx, (getSelectedImageIndex(idx) - 1 + getThumbnails(product.images).length) % getThumbnails(product.images).length)"
+                                  class="w-6 h-6 rounded-full flex items-center justify-center transition-colors"
+                                  :class="isDarkMode ? 'bg-gray-800/80 hover:bg-gray-700/80' : 'bg-white/80 hover:bg-white'"
+                                  title="Imagen anterior"
+                                >
+                                  <svg class="w-4 h-4" :class="isDarkMode ? 'text-white' : 'text-gray-700'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  @click.stop="selectImage(idx, (getSelectedImageIndex(idx) + 1) % getThumbnails(product.images).length)"
+                                  class="w-6 h-6 rounded-full flex items-center justify-center transition-colors"
+                                  :class="isDarkMode ? 'bg-gray-800/80 hover:bg-gray-700/80' : 'bg-white/80 hover:bg-white'"
+                                  title="Imagen siguiente"
+                                >
+                                  <svg class="w-4 h-4" :class="isDarkMode ? 'text-white' : 'text-gray-700'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                            
+                            <!-- Thumbnails -->
+                            <div v-if="product.images && getThumbnails(product.images).length > 1" class="space-y-1">
+                              <div class="flex gap-1">
+                                <button
+                                  v-for="(image, imgIdx) in getThumbnails(product.images || [])"
+                                  :key="`thumb-${idx}-${imgIdx}`"
+                                  @click.stop="selectImage(idx, imgIdx)"
+                                  class="w-8 h-8 rounded overflow-hidden border-2 transition-all duration-200 hover:scale-105"
+                                  :class="[
+                                    getSelectedImageIndex(idx) === imgIdx 
+                                      ? (isDarkMode ? 'border-blue-400' : 'border-blue-600')
+                                      : (isDarkMode ? 'border-gray-600' : 'border-gray-300'),
+                                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                                  ]"
+                                  :title="`Ver imagen ${imgIdx + 1}`"
+                                >
+                                  <img
+                                    :src="image"
+                                    :alt="`${product.name} - imagen ${imgIdx + 1}`"
+                                    class="w-full h-full object-contain p-0.5"
+                                    @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+                                  />
+                                </button>
+                              </div>
+                              <!-- Image counter -->
+                              <div class="text-xs text-center" :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+                                {{ getSelectedImageIndex(idx) + 1 }}/{{ getThumbnails(product.images).length }}
                               </div>
                             </div>
                           </div>
@@ -489,10 +555,105 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Image Lightbox -->
+    <Transition name="fade">
+      <div
+        v-if="lightboxOpen && getLightboxProduct()"
+        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90"
+        @click.self="closeLightbox"
+      >
+        <div class="relative max-w-7xl w-full h-full flex flex-col">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex-1">
+              <h3 class="text-white font-bold text-lg line-clamp-1">
+                {{ getLightboxProduct()?.name }}
+              </h3>
+              <p class="text-gray-400 text-sm">
+                {{ getLightboxProduct()?.store }} • {{ formatPrice(getLightboxProduct()?.price || 0) }}
+              </p>
+            </div>
+            <button
+              @click="closeLightbox"
+              class="ml-4 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              title="Cerrar (ESC)"
+            >
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Main Image Container -->
+          <div class="flex-1 flex items-center justify-center relative">
+            <!-- Previous Button -->
+            <button
+              v-if="getThumbnails(getLightboxProduct()?.images || []).length > 1"
+              @click="prevLightboxImage"
+              class="absolute left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
+              title="Imagen anterior (←)"
+            >
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+
+            <!-- Image -->
+            <div class="max-w-5xl max-h-full flex items-center justify-center">
+              <img
+                v-if="getThumbnails(getLightboxProduct()?.images || [])[lightboxImageIndex]"
+                :src="getThumbnails(getLightboxProduct()?.images || [])[lightboxImageIndex]"
+                :alt="getLightboxProduct()?.name"
+                class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                @error="(e) => (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22system-ui%22 font-size=%2216%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E'"
+              />
+            </div>
+
+            <!-- Next Button -->
+            <button
+              v-if="getThumbnails(getLightboxProduct()?.images || []).length > 1"
+              @click="nextLightboxImage"
+              class="absolute right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-all hover:scale-110"
+              title="Imagen siguiente (→)"
+            >
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+
+            <!-- Image Counter -->
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full bg-black/50 text-white text-sm">
+              {{ lightboxImageIndex + 1 }} / {{ getThumbnails(getLightboxProduct()?.images || []).length }}
+            </div>
+          </div>
+
+          <!-- Thumbnails -->
+          <div v-if="getThumbnails(getLightboxProduct()?.images || []).length > 1" class="mt-4 flex justify-center gap-2 overflow-x-auto pb-2">
+            <button
+              v-for="(image, imgIdx) in getThumbnails(getLightboxProduct()?.images || [])"
+              :key="`lightbox-thumb-${imgIdx}`"
+              @click="lightboxImageIndex = imgIdx"
+              class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all hover:scale-105"
+              :class="lightboxImageIndex === imgIdx ? 'border-blue-400' : 'border-white/30'"
+            >
+              <img
+                :src="image"
+                :alt="`${getLightboxProduct()?.name} - imagen ${imgIdx + 1}`"
+                class="w-full h-full object-contain bg-white/10"
+                @error="(e) => (e.target as HTMLImageElement).style.display = 'none'"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </Teleport>
 </template>
 
 <script setup lang="ts">
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+
 interface Product {
   url: string;
   storeName: string;
@@ -542,6 +703,10 @@ const error = ref('');
 const comparisonData = ref<ComparisonData | null>(null);
 const isDarkMode = ref(false);
 const flippedCards = ref<Set<number>>(new Set());
+const selectedImageIndex = ref<Record<number, number>>({});
+const lightboxOpen = ref(false);
+const lightboxProductIndex = ref<number | null>(null);
+const lightboxImageIndex = ref(0);
 
 // Toggle flip state for a card
 const toggleFlip = (idx: number) => {
@@ -556,6 +721,67 @@ const toggleFlip = (idx: number) => {
 
 const isFlipped = (idx: number) => flippedCards.value.has(idx);
 
+// Image gallery management
+const selectImage = (productIdx: number, imageIdx: number) => {
+  selectedImageIndex.value[productIdx] = imageIdx;
+};
+
+const getSelectedImageIndex = (productIdx: number) => {
+  return selectedImageIndex.value[productIdx] || 0;
+};
+
+const getCurrentImage = (product: any, productIdx: number) => {
+  if (!product.images || product.images.length === 0) return null;
+  const idx = getSelectedImageIndex(productIdx);
+  return product.images[idx] || product.images[0];
+};
+
+// Get unique thumbnails (filter out duplicates and small sizes)
+const getThumbnails = (images: string[]) => {
+  if (!images || images.length === 0) return [];
+  // Filter out images with 90x90 size (thumbnails) and keep only unique URLs
+  const uniqueImages = [...new Set(images.filter(img => !img.includes('90:90')))];
+  return uniqueImages.slice(0, 4); // Max 4 images
+};
+
+// Lightbox functions
+const openLightbox = (productIdx: number, imageIdx: number) => {
+  lightboxProductIndex.value = productIdx;
+  lightboxImageIndex.value = imageIdx;
+  lightboxOpen.value = true;
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+};
+
+const closeLightbox = () => {
+  lightboxOpen.value = false;
+  lightboxProductIndex.value = null;
+  lightboxImageIndex.value = 0;
+  // Restore body scroll
+  document.body.style.overflow = '';
+};
+
+const nextLightboxImage = () => {
+  if (lightboxProductIndex.value === null || !comparisonData.value) return;
+  const product = comparisonData.value.products[lightboxProductIndex.value];
+  if (!product) return;
+  const images = getThumbnails(product.images || []);
+  lightboxImageIndex.value = (lightboxImageIndex.value + 1) % images.length;
+};
+
+const prevLightboxImage = () => {
+  if (lightboxProductIndex.value === null || !comparisonData.value) return;
+  const product = comparisonData.value.products[lightboxProductIndex.value];
+  if (!product) return;
+  const images = getThumbnails(product.images || []);
+  lightboxImageIndex.value = (lightboxImageIndex.value - 1 + images.length) % images.length;
+};
+
+const getLightboxProduct = () => {
+  if (lightboxProductIndex.value === null || !comparisonData.value) return null;
+  return comparisonData.value.products[lightboxProductIndex.value];
+};
+
 const config = useRuntimeConfig();
 
 // Dark mode toggle
@@ -568,6 +794,31 @@ watch(() => props.isOpen, async (newValue) => {
   if (newValue && props.products.length > 0) {
     await fetchComparison();
   }
+});
+
+// Keyboard navigation for lightbox
+onMounted(() => {
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (!lightboxOpen.value) return;
+    
+    if (e.key === 'Escape') {
+      closeLightbox();
+    } else if (e.key === 'ArrowLeft') {
+      prevLightboxImage();
+    } else if (e.key === 'ArrowRight') {
+      nextLightboxImage();
+    }
+  };
+  
+  window.addEventListener('keydown', handleKeydown);
+  
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeydown);
+    // Restore body scroll if component unmounts while lightbox is open
+    if (lightboxOpen.value) {
+      document.body.style.overflow = '';
+    }
+  });
 });
 
 const fetchComparison = async () => {
