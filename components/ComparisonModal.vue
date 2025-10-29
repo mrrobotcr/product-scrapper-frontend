@@ -659,6 +659,7 @@ interface Product {
   storeName: string;
   product_name: string;
   price: number;
+  image?: string;  // Para tiendas sin detalle como infesa.com
 }
 
 interface ComparisonData {

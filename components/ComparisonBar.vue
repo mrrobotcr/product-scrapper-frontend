@@ -149,7 +149,8 @@
       url: p.product.url,
       storeName: p.storeName,
       product_name: p.product.product_name,
-      price: p.product.price
+      price: p.product.price,
+      image: p.product.image  // Importante para infesa.com (enriquecimiento con Gemini)
     }))"
     @close="closeModal"
   />
