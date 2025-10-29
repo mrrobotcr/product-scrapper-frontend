@@ -301,7 +301,7 @@ const { search, loading, error, results } = useProductSearch()
 const showSettings = ref(false)
 const searchSettings = ref({
   maxPages: 1,
-  topN: 15,
+  topN: 15,  // Máximo 15 productos por tienda
   filter: ''
 })
 

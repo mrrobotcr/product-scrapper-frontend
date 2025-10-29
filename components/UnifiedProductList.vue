@@ -118,7 +118,7 @@
     >
       <div
         v-for="(item, index) in filteredProducts"
-        :key="`${item.storeName}-${item.product.url}`"
+        :key="`${item.storeName}-${item.product.product_name}-${item.product.price}-${index}`"
         class="relative"
         :style="{ animationDelay: `${index * 30}ms` }"
       >
