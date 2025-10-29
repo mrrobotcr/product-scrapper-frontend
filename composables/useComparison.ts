@@ -18,7 +18,15 @@ const createUniqueId = (product: SimpleProduct, storeName: string): string => {
     price: product.price,
     store: storeName
   }
-  return btoa(JSON.stringify(data)) // Base64 encode para ID compacto
+  // Usar hash simple en lugar de btoa para evitar problemas con UTF-8 (acentos, ñ, etc.)
+  const jsonStr = JSON.stringify(data)
+  let hash = 0
+  for (let i = 0; i < jsonStr.length; i++) {
+    const char = jsonStr.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash // Convert to 32bit integer
+  }
+  return `prod_${Math.abs(hash).toString(36)}`
 }
 
 export const useComparison = () => {
