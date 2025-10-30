@@ -65,6 +65,20 @@
           </svg>
         </div>
         
+        <!-- Loading Indicator with animated icon -->
+        <Transition name="fade">
+          <div v-if="isLoading" class="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl pointer-events-none flex items-center justify-center">
+            <Icon name="ri:loader-4-line" class="w-8 h-8 text-blue-600 animate-spin" />
+          </div>
+        </Transition>
+
+        <!-- New Badge -->
+        <Transition name="scale">
+          <div v-if="isNew && !isLoading" class="absolute top-3 left-12 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2.5 py-1 rounded-full shadow-lg text-xs font-bold">
+            Nuevo
+          </div>
+        </Transition>
+
         <!-- Price Badge Floating -->
         <div class="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm">
           <span class="text-sm font-bold">{{ formatPrice(product.price) }}</span>
@@ -157,6 +171,8 @@ import type { SimpleProduct } from '~/types'
 const props = defineProps<{
   product: SimpleProduct
   storeName: string
+  isNew?: boolean
+  isLoading?: boolean
 }>()
 
 const formatPrice = (price: number) => {

@@ -11,7 +11,7 @@ export interface SimpleProduct {
 export interface StoreSearchResult {
   store: string
   domain: string
-  products: SimpleProduct[]
+  products: SimpleProduct[] | readonly SimpleProduct[]
   count: number
   success: boolean
   error?: string
@@ -24,7 +24,7 @@ export interface MultiStoreSearchResult {
   totalStores: number
   successfulStores: number
   totalProducts: number
-  stores: StoreSearchResult[]
+  stores: StoreSearchResult[] | readonly StoreSearchResult[]
   duration: number
   filtered?: boolean
   filterSummary?: string

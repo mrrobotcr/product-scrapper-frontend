@@ -1,51 +1,158 @@
 import type { MultiStoreSearchResult, SearchOptions } from '~/types'
 
+export type SearchPhase = 'idle' | 'scraping' | 'filtering' | 'sorting' | 'complete'
+
 export const useProductSearch = () => {
   const config = useRuntimeConfig()
-  const loading = ref(false)
+  const phase = ref<SearchPhase>('idle')
   const error = ref<string | null>(null)
   const results = ref<MultiStoreSearchResult | null>(null)
+  
+  // Estado de progreso para cada fase
+  const progress = ref({
+    scraping: false,
+    filtering: false,
+    sorting: false
+  })
+
+  // Progreso simulado para animaciones (0-100%)
+  const progressPercent = ref(0)
+  const progressInterval = ref<ReturnType<typeof setInterval> | null>(null)
+
+  // Función para iniciar animación de progreso
+  const startProgressAnimation = () => {
+    progressPercent.value = 10
+    progressInterval.value = setInterval(() => {
+      if (progressPercent.value < 85) {
+        // Incremento más pequeño y controlado
+        progressPercent.value += Math.random() * 8 + 2
+      }
+    }, 400)
+  }
+
+  // Función para completar progreso
+  const completeProgress = () => {
+    if (progressInterval.value) {
+      clearInterval(progressInterval.value)
+    }
+    progressPercent.value = 100
+  }
 
   const search = async (options: SearchOptions) => {
-    loading.value = true
+    phase.value = 'scraping'
     error.value = null
     results.value = null
+    progressPercent.value = 0
+    progress.value = {
+      scraping: false,
+      filtering: false,
+      sorting: false
+    }
 
     try {
-      const response = await $fetch<{ success: boolean } & MultiStoreSearchResult>(
-        `${config.public.apiBase}/api/search`,
+      // FASE 1: Scraping
+      console.log('🔍 FASE 1: Iniciando scraping...')
+      const scrapeResponse = await $fetch<{ success: boolean } & MultiStoreSearchResult>(
+        `${config.public.apiBase}/api/search/scrape`,
         {
           method: 'POST',
           body: {
             search: options.search,
-            type: options.type || 'open_search',
-            topN: options.topN,
-            filter: options.filter,
             maxPages: options.maxPages
           }
         }
       )
 
-      if (response.success) {
-        results.value = response
-      } else {
-        error.value = 'Error en la búsqueda'
+      if (!scrapeResponse.success) {
+        throw new Error('Error en scraping')
       }
+
+      // Actualizar resultados con productos scrapeados
+      results.value = scrapeResponse
+      progress.value.scraping = true
+      console.log('✅ FASE 1 completada: Productos scrapeados mostrados')
+
+      // FASE 2: Filtrado (si se requiere)
+      if (options.topN || options.filter) {
+        phase.value = 'filtering'
+        startProgressAnimation()
+        console.log('🤖 FASE 2: Iniciando filtrado...')
+
+        const filterResponse = await $fetch<{ success: boolean } & MultiStoreSearchResult>(
+          `${config.public.apiBase}/api/search/filter`,
+          {
+            method: 'POST',
+            body: {
+              search: options.search,
+              stores: scrapeResponse.stores,
+              topN: options.topN,
+              filter: options.filter
+            }
+          }
+        )
+
+        if (!filterResponse.success) {
+          throw new Error('Error en filtrado')
+        }
+
+        // Actualizar resultados con productos filtrados
+        results.value = filterResponse
+        progress.value.filtering = true
+        console.log('✅ FASE 2 completada: Productos filtrados mostrados')
+      } else {
+        progress.value.filtering = true
+      }
+
+      // FASE 3: Ordenado
+      phase.value = 'sorting'
+      startProgressAnimation()
+      console.log('🔄 FASE 3: Iniciando ordenado...')
+
+      const sortResponse = await $fetch<{ success: boolean } & MultiStoreSearchResult>(
+        `${config.public.apiBase}/api/search/sort`,
+        {
+          method: 'POST',
+          body: {
+            search: options.search,
+            stores: results.value.stores
+          }
+        }
+      )
+
+      if (!sortResponse.success) {
+        throw new Error('Error en ordenado')
+      }
+
+      // Actualizar resultados con productos ordenados
+      results.value = sortResponse
+      progress.value.sorting = true
+      completeProgress()
+      phase.value = 'complete'
+      console.log('✅ FASE 3 completada: Productos ordenados mostrados')
+
     } catch (err: any) {
       error.value = err.message || 'Error al conectar con el servidor'
       console.error('Error en búsqueda:', err)
-    } finally {
-      loading.value = false
+      phase.value = 'idle'
+      completeProgress()
     }
   }
 
   const clearResults = () => {
     results.value = null
     error.value = null
+    phase.value = 'idle'
+    progress.value = {
+      scraping: false,
+      filtering: false,
+      sorting: false
+    }
   }
 
   return {
-    loading: readonly(loading),
+    phase: readonly(phase),
+    progress: readonly(progress),
+    progressPercent: readonly(progressPercent),
     error: readonly(error),
     results: readonly(results),
     search,

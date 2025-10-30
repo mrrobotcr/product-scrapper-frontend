@@ -1,5 +1,25 @@
 <template>
-  <div class="space-y-8 animate-in">
+  <div class="space-y-4 animate-in">
+    <!-- Progress Bar y Indicador Dinámico (estilo Skyscanner) -->
+    <Transition name="fade">
+      <div v-if="isProcessing" class="space-y-2">
+        <!-- Indicador dinámico según fase -->
+        <div class="flex items-center gap-2 text-xs text-gray-600">
+          <svg class="w-4 h-4 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>{{ statusMessage }}</span>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300"
+            :style="{ width: `${progressPercent}%` }"
+          ></div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Filtros y Ordenamiento con Glassmorphism -->
     <div class="glass rounded-2xl shadow-lg border border-white/60 p-6 lg:p-8">
       <div class="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
@@ -145,6 +165,8 @@
         <ProductCard
           :product="item.product"
           :store-name="item.storeName"
+          :is-new="item.isNew"
+          :is-loading="item.isLoading"
         />
       </div>
     </TransitionGroup>
@@ -189,20 +211,44 @@
 
 <script setup lang="ts">
 import type { MultiStoreSearchResult, SimpleProduct } from '~/types'
+import type { SearchPhase } from '~/composables/useProductSearch'
 
 const props = defineProps<{
   results: MultiStoreSearchResult
+  phase?: SearchPhase
+  isProcessing?: boolean
+  progressPercent?: number
 }>()
 
 interface ProductWithStore {
   product: SimpleProduct
   storeName: string
   isLowestPrice: boolean
+  isNew?: boolean
+  isLoading?: boolean
 }
 
 // Estado reactivo
 const selectedStore = ref<string | null>(null)
 const sortBy = ref<'price-asc' | 'price-desc' | 'relevance' | 'store'>('price-asc')
+
+// Contadores de tiendas
+const totalStores = computed(() => props.results.totalStores)
+const verifiedStores = computed(() => props.results.successfulStores)
+
+// Mensaje dinámico según la fase
+const statusMessage = computed(() => {
+  switch (props.phase) {
+    case 'scraping':
+      return 'Buscando productos...'
+    case 'filtering':
+      return 'Filtrando productos relevantes'
+    case 'sorting':
+      return 'Ordenando resultados...'
+    default:
+      return 'Actualizando...'
+  }
+})
 
 // Lista de tiendas con contadores
 const storeList = computed(() => {
@@ -234,6 +280,13 @@ const allProducts = computed(() => {
 // Detectar productos similares y marcar el más barato
 const productsWithLowestPrice = computed(() => {
   const products = [...allProducts.value]
+  
+  // Marcar productos como "cargando" durante filtrado y ordenado
+  if (props.isProcessing && (props.phase === 'filtering' || props.phase === 'sorting')) {
+    products.forEach(item => {
+      item.isLoading = true
+    })
+  }
   
   // Agrupar por nombre similar (primeras 30 caracteres)
   const groups = new Map<string, ProductWithStore[]>()
@@ -301,28 +354,30 @@ const getSortLabel = () => {
 </script>
 
 <style scoped>
-/* List transition para grid de productos */
+/* List transition para grid de productos - Transición cruzada suave */
 .list-enter-active {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s ease-out;
 }
 
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in;
+  position: absolute;
 }
 
 .list-enter-from {
   opacity: 0;
-  transform: translateY(20px) scale(0.95);
+  transform: scale(0.98);
 }
 
 .list-leave-to {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 .list-move {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s ease-out;
 }
+
 
 /* Scale transition para badge */
 .scale-enter-active,

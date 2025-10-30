@@ -1,121 +1,116 @@
 <template>
   <div class="min-h-screen">
-    <!-- Hero Header with Gradient -->
-    <header class="relative bg-gradient-to-br from-gray-50 via-blue-50/30 to-white border-b border-gray-200">
-      <!-- Decorative Blob -->
-      <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl"></div>
-      </div>
-      
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <!-- Top Bar -->
-        <div class="flex items-center justify-between mb-8">
-          <!-- Logo & Tagline -->
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Compact Header -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
             </div>
-            <div>
-              <h1 class="text-2xl lg:text-3xl font-bold text-gradient">
-                Product Scrapper
-              </h1>
-              <p class="text-sm text-gray-600 flex items-center gap-1.5 mt-0.5">
-                <span class="inline-flex items-center">
-                  <svg class="w-3.5 h-3.5 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                  </svg>
-                  Costa Rica
-                </span>
-                <span class="text-gray-400">•</span>
-                <span>Comparación en tiempo real</span>
-              </p>
-            </div>
+            <h1 class="text-lg font-bold text-gray-900">Comparotodo.com</h1>
           </div>
           
           <!-- Settings Button -->
           <button
             @click="showSettings = true"
-            class="btn btn-ghost btn-md group"
+            class="btn btn-ghost btn-sm"
             aria-label="Abrir configuración"
           >
-            <svg class="w-5 h-5 transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <span class="hidden sm:inline">Configuración</span>
           </button>
-        </div>
-        
-        <!-- Value Proposition -->
-        <div class="max-w-3xl mx-auto text-center mb-8">
-          <h2 class="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Compara precios al instante
-          </h2>
-          <p class="text-lg text-gray-600 leading-relaxed">
-            Busca productos en <span class="font-semibold text-blue-600">múltiples tiendas</span> simultáneamente.
-            Encuentra el mejor precio con <span class="font-semibold text-blue-600">IA inteligente</span>.
-          </p>
         </div>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      <!-- Search Section with Context -->
-      <div class="mb-12 -mt-16 relative z-10">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Search Section -->
+      <div class="mb-6">
         <SearchBar
           @search="handleSearch"
-          :loading="loading"
+          :loading="isProcessing"
         />
       </div>
 
-      <!-- Loading State with Progress Context -->
+      <!-- Compact Loading State with Phase Indicators -->
       <Transition name="fade" mode="out-in">
-        <div v-if="loading" class="animate-in">
-          <div class="card p-12 text-center">
-            <div class="inline-flex flex-col items-center gap-6">
+        <div v-if="isProcessing && !results" class="animate-in">
+          <div class="card p-6 text-center">
+            <div class="flex flex-col items-center gap-3">
               <!-- Animated Loader -->
               <div class="relative">
-                <div class="w-16 h-16 border-4 border-blue-200 rounded-full"></div>
-                <div class="absolute inset-0 w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div class="w-12 h-12 border-3 border-blue-200 rounded-full"></div>
+                <div class="absolute inset-0 w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               </div>
               
-              <div class="space-y-2">
-                <p class="text-xl font-semibold text-gray-900">
-                  Buscando en múltiples tiendas
-                </p>
-                <p class="text-sm text-gray-600 max-w-md">
-                  Estamos scrapeando productos y filtrando con IA.
-                  <span class="inline-flex items-center gap-1 text-blue-600 font-medium">
-                    Esto toma ~10-15 segundos
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                  </span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-gray-900">
+                  {{ phase === 'scraping' ? 'Buscando tus productos favoritos...' : 
+                     phase === 'filtering' ? 'Filtrando...' : 
+                     phase === 'sorting' ? 'Ordenando...' : 
+                     'Procesando...' }}
                 </p>
                 
-                <!-- Loading Steps -->
-                <div class="mt-6 flex items-center justify-center gap-2">
-                  <div class="flex items-center gap-1.5 text-xs text-gray-500">
-                    <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                    <span>Scraping</span>
+                <!-- Progressive Loading Steps -->
+                <div class="mt-3 flex items-center justify-center gap-1">
+                  <!-- Scraping Step -->
+                  <div :class="[
+                    'flex items-center gap-1.5 text-xs transition-all',
+                    progress.scraping ? 'text-green-600 font-medium' : phase === 'scraping' ? 'text-blue-600 font-medium' : 'text-gray-400'
+                  ]">
+                    <div v-if="progress.scraping" class="w-2 h-2 bg-green-600 rounded-full">
+                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div v-else-if="phase === 'scraping'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <span>Buscando tus productos favoritos...</span>
                   </div>
+                  
                   <svg class="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                   </svg>
-                  <div class="flex items-center gap-1.5 text-xs text-gray-500">
-                    <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-                    <span>Filtrando IA</span>
+                  
+                  <!-- Filtering Step -->
+                  <div :class="[
+                    'flex items-center gap-1.5 text-xs transition-all',
+                    progress.filtering ? 'text-green-600 font-medium' : phase === 'filtering' ? 'text-blue-600 font-medium' : 'text-gray-400'
+                  ]">
+                    <div v-if="progress.filtering" class="w-2 h-2 bg-green-600 rounded-full">
+                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div v-else-if="phase === 'filtering'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <span>Filtrado</span>
                   </div>
+                  
                   <svg class="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                   </svg>
-                  <div class="flex items-center gap-1.5 text-xs text-gray-500">
-                    <div class="w-2 h-2 bg-blue-200 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
-                    <span>Ordenando</span>
+                  
+                  <!-- Sorting Step -->
+                  <div :class="[
+                    'flex items-center gap-1.5 text-xs transition-all',
+                    progress.sorting ? 'text-green-600 font-medium' : phase === 'sorting' ? 'text-blue-600 font-medium' : 'text-gray-400'
+                  ]">
+                    <div v-if="progress.sorting" class="w-2 h-2 bg-green-600 rounded-full">
+                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div v-else-if="phase === 'sorting'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <span>Ordenado</span>
                   </div>
                 </div>
               </div>
@@ -165,60 +160,58 @@
 
       <!-- Results -->
       <SearchResults
-        v-if="results && !loading"
+        v-if="results"
         :results="results"
+        :phase="phase"
+        :is-processing="isProcessing"
+        :progress-percent="progressPercent"
       />
 
       <!-- Empty State with Onboarding -->
       <Transition name="fade" mode="out-in">
-        <div v-if="!results && !loading && !error" class="animate-in">
-          <div class="text-center py-16 lg:py-24">
+        <div v-if="!results && !isProcessing && !error" class="animate-in">
+          <div class="text-center py-8 lg:py-12">
             <!-- Illustration -->
-            <div class="mb-8 relative inline-block">
-              <div class="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full"></div>
-              <svg class="relative w-24 h-24 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mb-4 relative inline-block">
+              <svg class="relative w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
             
-            <h3 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
-              ¿Qué producto estás buscando?
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              ¿Qué producto buscas?
             </h3>
-            <p class="text-gray-600 max-w-xl mx-auto mb-8 leading-relaxed">
-              Ingresa el nombre de cualquier producto y compara precios en tiempo real entre
-              <span class="font-semibold text-blue-600">múltiples tiendas de Costa Rica</span>
+            <p class="text-sm text-gray-600 max-w-xl mx-auto mb-6">
+              Compara precios en múltiples tiendas de Costa Rica
             </p>
             
             <!-- Features Grid -->
-            <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
-              <div class="card p-6 text-center hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div class="card p-4 text-center">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                   </svg>
                 </div>
-                <h4 class="font-semibold text-gray-900 mb-1">Súper rápido</h4>
-                <p class="text-sm text-gray-600">Resultados en 10-15 segundos</p>
+                <h4 class="text-sm font-semibold text-gray-900">Rápido</h4>
               </div>
               
-              <div class="card p-6 text-center hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-indigo-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="card p-4 text-center">
+                <div class="w-10 h-10 bg-indigo-100 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                   </svg>
                 </div>
-                <h4 class="font-semibold text-gray-900 mb-1">Filtrado con IA</h4>
-                <p class="text-sm text-gray-600">GPT-4 encuentra lo mejor</p>
+                <h4 class="text-sm font-semibold text-gray-900">IA</h4>
               </div>
               
-              <div class="card p-6 text-center hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-green-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="card p-4 text-center">
+                <div class="w-10 h-10 bg-green-100 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
-                <h4 class="font-semibold text-gray-900 mb-1">Mejor precio</h4>
-                <p class="text-sm text-gray-600">Destacamos las ofertas</p>
+                <h4 class="text-sm font-semibold text-gray-900">Mejor precio</h4>
               </div>
             </div>
           </div>
@@ -296,7 +289,10 @@
 <script setup lang="ts">
 import type { SearchOptions } from '~/types'
 
-const { search, loading, error, results } = useProductSearch()
+const { search, phase, progress, progressPercent, error, results } = useProductSearch()
+
+// Computed para saber si está procesando
+const isProcessing = computed(() => phase.value !== 'idle' && phase.value !== 'complete')
 
 const showSettings = ref(false)
 const searchSettings = ref({
