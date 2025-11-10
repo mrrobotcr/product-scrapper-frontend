@@ -39,79 +39,65 @@
         />
       </div>
 
-      <!-- Compact Loading State with Phase Indicators -->
+      <!-- Enhanced Loading State with Dynamic Animations -->
       <Transition name="fade" mode="out-in">
         <div v-if="isProcessing && !results" class="animate-in">
-          <div class="card p-6 text-center">
-            <div class="flex flex-col items-center gap-3">
-              <!-- Animated Loader -->
+          <div class="card p-8 text-center">
+            <div class="flex flex-col items-center gap-6">
+              <!-- Dynamic Animated Loader -->
               <div class="relative">
-                <div class="w-12 h-12 border-3 border-blue-200 rounded-full"></div>
-                <div class="absolute inset-0 w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div class="w-16 h-16 rounded-full border-4 border-blue-100"></div>
+                <div class="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-blue-600 border-r-indigo-600 animate-spin"></div>
+                <!-- Central pulse -->
+                <div class="absolute inset-4 w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full animate-pulse"></div>
               </div>
-              
-              <div class="space-y-1">
-                <p class="text-sm font-semibold text-gray-900">
-                  {{ phase === 'scraping' ? 'Buscando tus productos favoritos...' : 
-                     phase === 'filtering' ? 'Filtrando...' : 
-                     phase === 'sorting' ? 'Ordenando...' : 
-                     'Procesando...' }}
+
+              <!-- Dynamic Phase Message -->
+              <div class="space-y-3">
+                <p class="text-lg font-bold text-gray-900 transition-all duration-500">
+                  {{ getPhaseMessage() }}
                 </p>
-                
-                <!-- Progressive Loading Steps -->
-                <div class="mt-3 flex items-center justify-center gap-1">
-                  <!-- Scraping Step -->
-                  <div :class="[
-                    'flex items-center gap-1.5 text-xs transition-all',
-                    progress.scraping ? 'text-green-600 font-medium' : phase === 'scraping' ? 'text-blue-600 font-medium' : 'text-gray-400'
-                  ]">
-                    <div v-if="progress.scraping" class="w-2 h-2 bg-green-600 rounded-full">
-                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                      </svg>
+                <p class="text-sm text-gray-600 animate-pulse">
+                  {{ getPhaseDescription() }}
+                </p>
+
+                <!-- Live Progress Bar -->
+                <div class="w-full max-w-md mx-auto">
+                  <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500 ease-out relative overflow-hidden"
+                      :style="{ width: `${progressPercent}%` }"
+                    >
+                      <div class="absolute inset-0 bg-white opacity-20 animate-shimmer"></div>
                     </div>
-                    <div v-else-if="phase === 'scraping'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <span>Buscando tus productos favoritos...</span>
                   </div>
-                  
-                  <svg class="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  
-                  <!-- Filtering Step -->
-                  <div :class="[
-                    'flex items-center gap-1.5 text-xs transition-all',
-                    progress.filtering ? 'text-green-600 font-medium' : phase === 'filtering' ? 'text-blue-600 font-medium' : 'text-gray-400'
-                  ]">
-                    <div v-if="progress.filtering" class="w-2 h-2 bg-green-600 rounded-full">
-                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div v-else-if="phase === 'filtering'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <span>Filtrado</span>
+                  <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs text-gray-500">Progreso</span>
+                    <span class="text-xs font-medium text-gray-700">{{ Math.round(progressPercent) }}%</span>
                   </div>
-                  
-                  <svg class="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  
-                  <!-- Sorting Step -->
-                  <div :class="[
-                    'flex items-center gap-1.5 text-xs transition-all',
-                    progress.sorting ? 'text-green-600 font-medium' : phase === 'sorting' ? 'text-blue-600 font-medium' : 'text-gray-400'
-                  ]">
-                    <div v-if="progress.sorting" class="w-2 h-2 bg-green-600 rounded-full">
-                      <svg class="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div v-else-if="phase === 'sorting'" class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-                    <div v-else class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <span>Ordenado</span>
+                </div>
+
+                <!-- Store Status Cards -->
+                <div class="mt-6 w-full max-w-2xl">
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <StoreLoadingCard
+                      v-for="store in storesStatus"
+                      :key="store.name"
+                      :store="store"
+                    />
                   </div>
+                </div>
+
+                <!-- Phase Steps -->
+                <div class="mt-8 flex items-center justify-center gap-2">
+                  <PhaseStep
+                    v-for="(step, index) in phases"
+                    :key="step.phase"
+                    :step="step"
+                    :is-active="phase === step.phase"
+                    :is-completed="progress[step.phase as keyof typeof progress.value]"
+                    :is-last="index === phases.length - 1"
+                  />
                 </div>
               </div>
             </div>
@@ -293,6 +279,79 @@ const { search, phase, progress, progressPercent, error, results } = useProductS
 
 // Computed para saber si está procesando
 const isProcessing = computed(() => phase.value !== 'idle' && phase.value !== 'complete')
+
+// Define las tiendas que se están procesando
+const storesStatus = ref([
+  { name: 'EPA', status: 'pending', products: 0, logo: '/logos/epa.svg', logoType: 'image' },
+  { name: 'Novex', status: 'pending', products: 0, logo: '/logos/novex.svg', logoType: 'image' },
+  { name: 'Infesa', status: 'pending', products: 0, logo: '/logos/infesa.svg', logoType: 'image' },
+  { name: 'El Lagar', status: 'pending', products: 0, logo: '/logos/el-lagar.svg', logoType: 'image' }
+])
+
+// Define las fases del proceso
+const phases = ref([
+  { phase: 'scraping', label: 'Búsqueda', description: 'Buscando en las tiendas' },
+  { phase: 'filtering', label: 'Filtrado', description: 'Aplicando filtros inteligentes' },
+  { phase: 'sorting', label: 'Ordenamiento', description: 'Organizando resultados' }
+])
+
+// Funciones para mensajes dinámicos
+const getPhaseMessage = () => {
+  switch (phase.value) {
+    case 'scraping':
+      return '🔍 Buscando en múltiples tiendas...'
+    case 'filtering':
+      return '🤖 Aplicando inteligencia artificial...'
+    case 'sorting':
+      return '🔄 Organizando los mejores resultados...'
+    default:
+      return '⚡ Procesando tu búsqueda...'
+  }
+}
+
+const getPhaseDescription = () => {
+  switch (phase.value) {
+    case 'scraping':
+      return 'Analizando catálogos en tiempo real...'
+    case 'filtering':
+      return 'Seleccionando los productos más relevantes...'
+    case 'sorting':
+      return 'Agrupando productos similares...'
+    default:
+      return 'Preparando tus resultados...'
+  }
+}
+
+// Simular actualización de estados de tiendas durante el scraping
+watch(phase, (newPhase) => {
+  if (newPhase === 'scraping') {
+    // Simular progreso de las tiendas
+    let storeIndex = 0
+    const interval = setInterval(() => {
+      if (storeIndex < storesStatus.value.length) {
+        storesStatus.value[storeIndex].status = 'loading'
+        setTimeout(() => {
+          if (storeIndex < storesStatus.value.length) {
+            storesStatus.value[storeIndex].status = 'completed'
+            storesStatus.value[storeIndex].products = Math.floor(Math.random() * 50) + 10
+          }
+        }, 1000 + Math.random() * 2000)
+        storeIndex++
+      } else {
+        clearInterval(interval)
+      }
+    }, 800)
+  } else if (newPhase === 'filtering') {
+    // Resetear tiendas para el filtrado
+    storesStatus.value.forEach(store => {
+      store.status = 'filtering'
+    })
+  } else if (newPhase === 'sorting') {
+    storesStatus.value.forEach(store => {
+      store.status = 'sorting'
+    })
+  }
+})
 
 const showSettings = ref(false)
 const searchSettings = ref({

@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   
   modules: ['@nuxt/image', '@nuxt/eslint', '@nuxt/icon'],
   
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', '~/assets/css/loading-animations.css'],
   
   postcss: {
     plugins: {
